@@ -14,9 +14,9 @@ enum {
 
 /* lval can be a number or an error */
 typedef struct {
-    int   type;
-    long  num;
-    int   err;
+    int     type;
+    long    num;
+    int     err;
 } lval;
 
 /* Create a new number type lval */
