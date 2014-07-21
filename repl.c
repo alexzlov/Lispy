@@ -4,6 +4,7 @@
 
 #include "mpc.h"
 #include "term_colors.h"
+#include "lval.h"
 
 /* Static buffer for user input */
 static char input[2048];
@@ -12,7 +13,7 @@ void print_version() {
     printf("%s%s", FG_COLOR_WHITE, BG_COLOR_RED);
     puts("Lispy Version 0.0.1 ");
     printf("Press Ctrl+c to Exit\n");
-    printf(COLOR_RESET);
+    printf("%s%s", BG_COLOR_BLACK, COLOR_RESET);
 }
 
 /* Eval operand */
@@ -25,7 +26,6 @@ long eval_op(long x, char* op, long y) {
 }
 
 long eval(mpc_ast_t* t) {
-    
     /* If tagged as number return it directly, otherwise expression. */
     if (strstr(t->tag, "number")) { return atoi(t->contents); }
 
@@ -73,9 +73,10 @@ int main(int argc, char** argv) {
 
         mpc_result_t r;
         if (mpc_parse("<stdin>", input, Lispy, &r)) {
-            /* On success print the AST */
+            /* On success eval and print the AST */
             long result = eval(r.output);
             printf("%s%li%s\n", FG_COLOR_CYAN, result, COLOR_RESET);
+            mpc_ast_print(r.output);
             mpc_ast_delete(r.output);
         } else {
             /* Otherwise print the error */
