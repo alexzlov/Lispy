@@ -91,6 +91,7 @@ int main(int argc, char** argv) {
             lval_println(result);
             mpc_ast_print(r.output);
             mpc_ast_delete(r.output);
+            printf(COLOR_RESET);
         } else {
             /* Otherwise print the error */
             printf(FG_COLOR_RED);
