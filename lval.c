@@ -137,8 +137,6 @@ void lval_print(lval* v) {
 }
 
 void lval_println(lval* v) {
-    printf(FG_COLOR_CYAN);
     lval_print(v);
-    printf(COLOR_RESET);
     putchar('\n');
 }
