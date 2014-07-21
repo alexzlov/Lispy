@@ -20,7 +20,7 @@ typedef struct {
 } lval;
 
 /* Create a new number type lval */
-lval lval_num(long_x);
+lval lval_num(long x);
 
 /* Create a new error type lval */
 lval lval_err(int x);

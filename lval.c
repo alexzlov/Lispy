@@ -1,5 +1,6 @@
 #include "lval.h"
 #include <stdio.h>
+#include "term_colors.h"
 
 /* Create a new number type lval */
 lval lval_num(long x) {
@@ -21,9 +22,11 @@ lval lval_err(int x) {
 void lval_print(lval v) {
     switch(v.type) {
         case LVAL_NUM:
+            printf(FG_COLOR_CYAN);
             printf("%li", v.num);
             break;
         case LVAL_ERR:
+            printf(FG_COLOR_RED);
             switch(v.err) {
                 case LERR_DIV_ZERO:
                     printf("Error: division by zero!");
@@ -39,7 +42,13 @@ void lval_print(lval v) {
                     break;
             }
     }
+    printf(COLOR_RESET);
 }
 
 /* Print lval followed by a newline */
-void lval_println(lval v) { lval_print(v); putchar('\n'); }
+void lval_println(lval v) {
+    printf(FG_COLOR_CYAN);
+    lval_print(v);
+    printf(COLOR_RESET);
+    putchar('\n');
+}

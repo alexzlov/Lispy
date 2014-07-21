@@ -1,7 +1,7 @@
 CC=cc
 CFLAGS=-std=c99 -Wall
-SOURCES=repl.c mpc.c
-LDFLAGS=-ledit -lm
+SOURCES=repl.c mpc.c lval.c
+LDFLAGS=-ledit
 EXECUTABLE=repl
 
 all:

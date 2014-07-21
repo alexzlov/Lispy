@@ -11,29 +11,42 @@ static char input[2048];
 
 void print_version() {
     printf("%s%s", FG_COLOR_WHITE, BG_COLOR_RED);
-    puts("Lispy Version 0.0.1 ");
+    printf("Lispy Version 0.0.1 \n");
     printf("Press Ctrl+c to Exit\n");
-    printf("%s%s", BG_COLOR_BLACK, COLOR_RESET);
+    printf("%s%s\n", BG_COLOR_BLACK, COLOR_RESET);
 }
 
 /* Eval operand */
-long eval_op(long x, char* op, long y) {
-    if (strcmp(op, "+") == 0) { return x + y; }
-    if (strcmp(op, "-") == 0) { return x - y; }
-    if (strcmp(op, "*") == 0) { return x * y; }
-    if (strcmp(op, "/") == 0) { return x / y; }
-    return 0;
+lval eval_op(lval x, char* op, lval y) {
+    if (x.type == LVAL_ERR) { return x; }
+    if (y.type == LVAL_ERR) { return y; }
+
+    if (strcmp(op, "+") == 0) { return lval_num(x.num + y.num); }
+    if (strcmp(op, "-") == 0) { return lval_num(x.num - y.num); }
+    if (strcmp(op, "*") == 0) { return lval_num(x.num * y.num); }
+    if (strcmp(op, "/") == 0) {
+        // Check and return error if zero division occurs
+        return y.num == 0 ? lval_err(LERR_DIV_ZERO) : lval_num(x.num / y.num);
+    }
+    if (strcmp(op, "%") == 0) {
+        return y.num == 0 ? lval_err(LERR_DIV_ZERO) : lval_num(x.num % y.num);
+    }
+    return lval_err(LERR_BAD_OP);
 }
 
-long eval(mpc_ast_t* t) {
+lval eval(mpc_ast_t* t) {
     /* If tagged as number return it directly, otherwise expression. */
-    if (strstr(t->tag, "number")) { return atoi(t->contents); }
+    if (strstr(t->tag, "number")) {
+        errno = 0;
+        long x = strtol(t->contents, NULL, 10);
+        return errno != ERANGE ? lval_num(x) : lval_err(LERR_BAD_NUM);
+    }
 
     /* The operator is always second child. */
     char* op = t->children[1]->contents;
 
     /* We store the third child in `x`. */
-    long x = eval(t->children[2]);
+    lval x = eval(t->children[2]);
 
     /* Iterate the remaining children, combining using our operator */
     int i = 3;
@@ -57,7 +70,7 @@ int main(int argc, char** argv) {
     mpca_lang(MPCA_LANG_DEFAULT,
         "                                                             \
           number        : /-?[0-9]+/ ;                                \
-          operator      : '+' | '-' | '*' | '/';                      \
+          operator      : '+' | '-' | '*' | '/' | '%';                \
           expr          : <number> | '(' <operator> <expr>+ ')';      \
           lispy         : /^/ <operator> <expr>+ /$/;                 \
         ",
@@ -74,8 +87,8 @@ int main(int argc, char** argv) {
         mpc_result_t r;
         if (mpc_parse("<stdin>", input, Lispy, &r)) {
             /* On success eval and print the AST */
-            long result = eval(r.output);
-            printf("%s%li%s\n", FG_COLOR_CYAN, result, COLOR_RESET);
+            lval result = eval(r.output);
+            lval_println(result);
             mpc_ast_print(r.output);
             mpc_ast_delete(r.output);
         } else {
