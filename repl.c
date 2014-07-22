@@ -92,7 +92,9 @@ int main(int argc, char** argv) {
             /*lval result = eval(r.output);*/
             /*lval_println(result);*/
             lval* x = lval_read(r.output);
+            printf(FG_COLOR_MAGENTA);
             lval_println(x);
+            printf(COLOR_RESET);
             lval_del(x);
             /*mpc_ast_print(r.output);*/
             mpc_ast_delete(r.output);

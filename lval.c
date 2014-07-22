@@ -111,7 +111,6 @@ lval* lval_read(mpc_ast_t* t) {
 
 /* Print out S-expression */
 void lval_expr_print(lval* v, char open, char close) {
-    printf(FG_COLOR_MAGENTA);
     putchar(open);
     for (int i = 0; i < v->count; i++) {
 
@@ -124,7 +123,6 @@ void lval_expr_print(lval* v, char open, char close) {
         }
     }
     putchar(close);
-    printf(COLOR_RESET);
 }
 
 void lval_print(lval* v) {
