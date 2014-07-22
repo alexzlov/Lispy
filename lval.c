@@ -138,3 +138,25 @@ void lval_println(lval* v) {
     lval_print(v);
     putchar('\n');
 }
+
+/* Evaluate S-expression */
+lval* lval_eval_sexpr(lval* v) {
+
+    /* Evaluate children */
+    for (int i = 0; i < v->count; i++) {
+        v->cell[i] = lval_eval(v->cell[i]);
+    }
+
+    /* Error checking */
+    for (int i = 0; i < v->count; i++) {
+        if (v->cell[i]->type == LVAL_ERR) { return lval_take(v, i); }
+    }
+
+    /* Empty Expression */
+    if (v->count == 0) { return v; }
+
+    /* Single Expression */
+    if (v->count == 1) { return lval_take(v, 0); }
+
+    /* Ensure first element is Symbol */
+}

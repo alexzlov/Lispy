@@ -50,4 +50,7 @@ void lval_expr_print(lval* v, char open, char close);
 void lval_print(lval* v);
 void lval_println(lval* v);
 
+/* Evaluate S-expression */
+lval* lval_eval_sexpr(lval* v);
+
 #endif
